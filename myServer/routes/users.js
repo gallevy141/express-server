@@ -19,4 +19,12 @@ router.get('/', function(req, res) {
   res.json({ users })
 })
 
+router.get('/:id', function(req, res) {
+  const user = users.find(u => u.id === parseInt(req.params.id, 10))
+  if (!user) {
+      return res.status(404).json({ error: 'User not found.' })
+  }
+  res.json({ user })
+})
+
 module.exports = router
