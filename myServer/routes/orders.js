@@ -18,4 +18,19 @@ router.get('/:id', function(req, res) {
     res.json({ order })
 })
 
+
+router.post('/', function(req, res) {
+    const { userId, product, amount } = req.body
+    if (!userId || !product || !amount) {
+        return res.status(400).json({ error: 'All fields are required.' })
+    }
+    const newOrder = {
+        id: orders.length + 1,
+        userId,
+        product,
+        amount
+    }
+    orders.push(newOrder);
+    res.status(201).json({ message: 'Order created successfully.', order: newOrder })
+})
 module.exports = router
