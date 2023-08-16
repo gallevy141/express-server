@@ -27,4 +27,19 @@ router.get('/:id', function(req, res) {
   res.json({ user })
 })
 
+router.post('/', function(req, res) {
+  const { name, age, email } = req.body
+  if (!name || !age || !email) {
+      return res.status(400).json({ error: 'All fields are required.' })
+  }
+  const newUser = {
+      id: users.length + 1,
+      name,
+      age,
+      email
+  }
+  users.push(newUser);
+  res.status(201).json({ message: 'User created successfully.', user: newUser })
+})
+
 module.exports = router
