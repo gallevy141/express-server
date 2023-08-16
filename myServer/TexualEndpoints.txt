@@ -1,0 +1,64 @@
+Users(`/users`)
+1. List Users
+    Name
+    HTTP Method: Get
+    URL: `/users`
+    Query Params: `age` (Optional)
+    Path Params: None
+    Body: None
+    Returned data:
+        Success: JSON list of users
+        Failure: JSON error message
+2. Retrieve User by ID
+    Name: Get User Details
+    HTTP Method: GET
+    URL: `/users/:id`
+    Query Params: None
+    Path Params: `id` (User's ID) - e.g. `/users/23`
+    Body: None
+    Returned data:
+        Success: JSON object of the user's details
+        Failure: 404 Not Found error with a JSON error message
+3. Create a New User
+    Name: Create User
+    HTTP Method: POST
+    URL: `/users`
+    Query Params: None
+    Path Params: None
+    Body: JSON object with `name, `age`, and `email` fields
+    Returned data:
+        Success: Message indicating sucess and details of created user
+        Failure: Error message indicating reason for failure - e.g. missing fields
+
+
+Orders(`/orders`)
+1. List All Orders
+    Name: List Orders
+    HTTP Method: GET
+    URL: `/orders`
+    Query Params: None
+    Path Params: None
+    Body: None
+    Returned data:
+        Success: JSON list of all orders
+        Failure: JSON error message
+2. Retrieve Order by ID
+    Name: Get Order Details
+    HTTP Method: GET
+    URL: `/orders/:id`
+    Query Params: None
+    Path Params: `id` (Order's ID) - e.g. `/orders/23`
+    Body: None
+    Returned data:
+        Success: JSON object of the order's details
+        Failure: 404 Not Found error with a JSON error message
+3. Create a New Order
+    Name: Create Order
+    HTTP Methond: POST
+    URL: `/orders`
+    Query Params: None
+    Path Params: None
+    Body: JSON object with `userId`, `product`, and `amount` fields
+    Returned data:
+        Success: Message indicating success and the details of the created order
+        Failure: Error message indicating the resaon for failure - e.g. missing fields
