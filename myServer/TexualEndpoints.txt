@@ -1,64 +1,317 @@
-Users(`/users`)
-1. List Users
-    Name
-    HTTP Method: Get
-    URL: `/users`
-    Query Params: `age` (Optional)
-    Path Params: None
-    Body: None
-    Returned data:
-        Success: JSON list of users
-        Failure: JSON error message
-2. Retrieve User by ID
-    Name: Get User Details
-    HTTP Method: GET
-    URL: `/users/:id`
-    Query Params: None
-    Path Params: `id` (User's ID) - e.g. `/users/23`
-    Body: None
-    Returned data:
-        Success: JSON object of the user's details
-        Failure: 404 Not Found error with a JSON error message
-3. Create a New User
-    Name: Create User
+User Endpoints
+1. Register:
+    Name: Register User
     HTTP Method: POST
-    URL: `/users`
+    URL: `/users/register`
     Query Params: None
     Path Params: None
-    Body: JSON object with `name, `age`, and `email` fields
+    Body: `{ username: String, password: String, email: String }`
     Returned data:
-        Success: Message indicating sucess and details of created user
-        Failure: Error message indicating reason for failure - e.g. missing fields
-
-
-Orders(`/orders`)
-1. List All Orders
-    Name: List Orders
+        Success: `{ userId: String, message: `Registration successful!` }`
+        Failure: `{ message: `Registration failed. Please try again.` }`
+2. Login:
+    Name: User Login
+    HTTP Method: POST
+    URL: `/users/login`
+    Query Params: None
+    Path Params: None
+    Body: `{ username: String, password: String }`
+    Returned data:
+        Success: `{ userId: String, token: String, message: `Login successful!` }`
+        Failure: `{ message: `Login failed. Check your details and try again.` }`
+3. Profile:
+    Name: Get User Profile
     HTTP Method: GET
-    URL: `/orders`
+    URL: `/users/:userId`
+    Query Params: None
+    Path Params: `userId`
+    Body: None
+    Returned data:
+        Success: '{ userId: String, username: String, email: String, orderHistory: Array, wishlist: Array, reviews: Array }'
+        Failure: `{ message: 'Fetching profile failed. User not found.' }`
+
+
+Product Endpoints:
+4. Browse All Products:
+    Name: Fetch All Products
+    HTTP Method: GET
+    Url: `/products`
     Query Params: None
     Path Params: None
     Body: None
-    Returned data:
-        Success: JSON list of all orders
-        Failure: JSON error message
-2. Retrieve Order by ID
-    Name: Get Order Details
+    Returns:
+        Success: `{ products: Array }`
+        Failure: `{ message: 'Failed to fetch products.' }`
+5. Product Details:
+    Name: Fetch Product Details
     HTTP Method: GET
-    URL: `/orders/:id`
+    Url: `/products/:productId`
     Query Params: None
-    Path Params: `id` (Order's ID) - e.g. `/orders/23`
+    Path Params: `productId`
     Body: None
-    Returned data:
-        Success: JSON object of the order's details
-        Failure: 404 Not Found error with a JSON error message
-3. Create a New Order
-    Name: Create Order
-    HTTP Methond: POST
-    URL: `/orders`
+    Returns:
+        Success: `{ productId: String, productName: String, price: Number, description: String, imageUrl: String }`
+        Failure: `{ message: 'Product not found.' }`
+
+
+Cart Endpoints
+6. Add to Cart:
+    Name: Add Product to Cart
+    HTTP Method: POST
+    Url: `/cart/add`
     Query Params: None
     Path Params: None
-    Body: JSON object with `userId`, `product`, and `amount` fields
-    Returned data:
-        Success: Message indicating success and the details of the created order
-        Failure: Error message indicating the resaon for failure - e.g. missing fields
+    Body: `{ userId: String, productId: String, quantity: Number }`
+    Returns:
+        Success: `{ message: 'Product added to cart.' }`
+        Failure: `{ message: 'Failed to add to cart.' }`
+7. View Cart:
+    Name: Fetch User Cart
+    HTTP Method: GET
+    Url: `/cart/:userId`
+    Query Params: None
+    Path Params: `userId`
+    Body: None
+    Returns:
+        Success: `{ items: Array }`
+        Failure: `{ message: 'Failed to fetch cart.' }`
+8. Delete from Cart:
+    Name: Remove Item from Cart
+    HTTP Method: DELETE
+    Url: `/cart/:cartItemId`
+    Query Params: None
+    Path Params: `cartItemId`
+    Body: None
+    Returns:
+        Success: `{ message: 'Product removed from cart.' }`
+        Failure: `{ message: 'Failed to remove product from cart.' }`
+
+
+Order Endpoints
+9. Checkout:
+    Name: Order Checkout
+    HTTP Method: POST
+    Url: `/orders/checkout`
+    Query Params: None
+    Path Params: None
+    Body: `{ userId: String, cart: Array, address: String }`
+    Returns:
+        Success: `{ orderId: String, message: 'Order placed successfully.' }`
+        Failure: `{ message: 'Failed to place order.' }`
+10. Order Confirmation/Receipt:
+    Name: Fetch Order Receipt
+    HTTP Method: GET
+    Url: `/orders/:orderId`
+    Query Params: None
+    Path Params: `orderId`
+    Body: None
+    Returns:    
+        Success: `{ orderDetails: Object }`
+        Failure: `{ message: 'Failed to fetch order details.' }`
+11. Order History: 
+    Name: Fetch User Order History
+    HTTP Method: GET
+    Url: `/orders/history/:userId`
+    Query Params: None
+    Path Params: `userId`
+    Body: None
+    Returns:
+        Success: `{ orders: Array }`
+        Failure: `{ message: 'Failed to fetch order history.' }`
+    
+
+Review Endpoints:
+12. Add Review:
+    Name: Post Product Review
+    HTTP Method: POST
+    Url: `/reviews/add`
+    Query Params: None
+    Path Params: None
+    Body: `{ userId: String, productId: String, reviewText: String, rating: Number }`
+    Returns:
+        Success: `{ reviewId: String, message: 'Review posted successfully.' }`
+        Failure: `{ message: 'Failed to post review.' }`
+13. Get Reviews for a Product:
+    Name: Fetch Product Reviews
+    HTTP Method: GET
+    Url: `/reviews/:productId`
+    Query Params: None
+    Path Params: `productId`
+    Body: None
+    Returns:
+        Success: `{ reviews: Array }`
+        Failure: `{ message: 'Failed to fetch reviews.' }`
+
+
+Wishlist Endpoints:
+14. Add to Wishlist:
+    Name: Add Product to Wishlist
+    HTTP Method: POST
+    Url: `/wishlist/add`
+    Query Params: None
+    Path Params: None
+    Body: `{ userId: String, productId: String }`
+    Returns:
+        Success: `{ message: 'Product added to wishlist.' }`
+        Failure: `{ message: 'Failed to add to wishlist.' }`
+15. View Wishlist:
+    Name: Fetch User Wishlist
+    HTTP Method: GET
+    Url: `/wishlist/:userId`
+    Query Params: None
+    Path Params: `userId`
+    Body: None
+    Returns:
+        Success: `{ items: Array }`
+        Failure: `{ message: 'Failed to fetch wishlist.' }`
+16. Delete from Wishlist:
+    Name: Remove Item from Wishlist
+    HTTP Method: DELETE
+    Url: `/wishlist/:wishlistItemId`
+    Query Params: None
+    Path Params: `wishlistItemId`
+    Body: None
+    Returns:
+        Success: `{ message: 'Product removed from wishlist.' }`
+        Failure: `{ message: 'Failed to remove product from wishlist.' }`
+
+
+Chatbox Endpoints:
+17. Send Message:
+    Name: User Sends a Message to Admin
+    HTTP Method: POST
+    Url: `/chat/send`
+    Query Params: None
+    Path Params: None
+    Body: `{ userId: String, message: String }`
+    Returns:
+        Success: `{ messageId: String, message: 'Message sent successfully.' }`
+        Failure: `{ message: 'Failed to send message.' }`
+2. Fetch Chat History:
+    Name: User Retrieves Chat History
+    HTTP Method: GET
+    Url: `/chat/history`
+    Query Params: `{ userId: String }`
+    Path Params: None
+    Body: None
+    Returns:
+        Success: `{ messages: Array }`
+        Failure: `{ message: 'Failed to retrieve chat history.' }`
+3. Receive New Messages:
+    Name: User Receives New Message
+    HTTP Method: GET
+    Url: `/chat/notifications`
+    Query Params: `{ userId: String }`
+    Path Params: None
+    Body: None
+    Returns:
+        Success: `{ newMessages: Array }`
+        Failure: `{ message: 'Failed to fetch new messages.' }`
+
+
+
+
+
+
+
+Admin Endpoints
+1. Add Product:
+    Name: Add a New Product
+    HTTP Method: POST
+    Url: `/admin/products/add`
+    Query Params: None
+    Path Params: None
+    Body: `{ productName: String, price: Number, description: String, imageUrl: String, category: String }`
+    Returns:
+        Success: `{ productId: String, message: 'Product added successfully.' }`
+        Failure: `{ message: 'Failed to add product.' }`
+2. Edit Product:
+    Name: Edit Product Details
+    HTTP Method: PUT
+    Url: `/admin/products/edit/:productId`
+    Query Params: None
+    Path Params: `productId`
+    Body: `{ productName?: String, price?: Number, description?: String, imageUrl?: String, category?: String }`
+    Returns:
+        Success: `{ message: 'Product updated successfully.' }`
+        Failure: `{ message: 'Failed to update product.' }`
+3. Delete Product:
+    Name: Delete a Product
+    HTTP Method: DELETE
+    Url: `/admin/products/delete/:productId`
+    Query Params: None
+    Path Params: `productId`
+    Body: None
+    Returns:
+        Success: `{ message: 'Product deleted successfully.' }`
+        Failure: `{ message: 'Failed to delete product.' }`
+4. Set Categories to Products:
+    Name: Assign Category to Product
+    HTTP Method: PUT
+    Url: `/admin/products/:productId/category`
+    Query Params: None
+    Path Params: `productId`
+    Body: `{ category: String }`
+    Returns:
+        Success: `{ message: 'Category set successfully.' }`
+        Failure: `{ message: 'Failed to set category.' }`
+5. Access User Purchase History
+    Name: View User's Purchase History
+    HTTP Method: GET
+    Url: `/admin/users/:userId/purchase-history`
+    Query Params: None
+    Path Params: `userId`
+    Body: None
+    Returns:
+        Success: `{ orders: Array }`
+        Failure: `{ message: 'Failed to fetch purchase history.' }`
+6. Approve/Disapprove USer Reviews
+    Name: Review Approval
+    HTTP Method: PUT
+    Url: `/admin/reviews/:reviewId`
+    Query Params: None
+    Path Params: `reviewId`
+    Body: `{ status: 'approved' | 'disapproved' }`
+    Returns:
+    Success: `{ message: 'Review status updated.' }`
+    Failure: `{ message: 'Failed to update review status.' }`
+7. Reply to Users via Chatbox:
+    Name: Reply to User's Chat
+    HTTP Method: POST
+    Url: `/admin/chat/:userId/reply`
+    Query Params: None
+    Path Params: `userId`
+    Body: `{ message: String }`
+    Returns:
+    Success: `{ message: 'Reply sent.' }`
+    Failure: `{ message: 'Failed to send reply.' }`
+8. View Orders:
+    Name: View All Orders
+    HTTP Method: GET
+    Url: `/admin/orders`
+    Query Params: None
+    Path Params: None
+    Body: None
+    Returns:
+        Success: `{ orders: Array }`
+        Failure: `{ message: 'Failed to fetch orders.' }`
+9. View Order Details:
+    Name: View Specific Order Details
+    HTTP Method: GET
+    Url: `/admin/orders/:orderId`
+    Query Params: None
+    Path Params: `orderId`
+    Body: None
+    Returns:
+        Success: `{ orderDetails: Object }`
+        Failure: `{ message: 'Failed to fetch order details.' }`
+10. Admin Profile:
+    Name: Admin Profile Details
+    HTTP Method: GET
+    Url: `/admin/profile`
+    Query Params: None
+    Path Params: None
+    Body: None
+    Returns:
+        Success: `{ email: String, role: String }`
+        Failure: `{ message: 'Failed to fetch profile details.' }`
