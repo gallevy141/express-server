@@ -26,4 +26,18 @@ router.post('/login', (req, res, next) => {
   }
 });
 
+router.get('/:userId', (req, res, next) => {
+  const user = users.find(u => u.userId === req.params.userId)
+  if (user) {
+    res.json({ 
+      userId: user.userId, 
+      username: user.username, 
+      email: user.email, 
+      password: user.password,
+    })
+  } else {
+    res.status(404).json({ message: 'User not found.' })
+  }
+})
+
 module.exports = router
