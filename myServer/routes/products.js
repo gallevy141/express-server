@@ -1,18 +1,14 @@
-var express = require('express')
-var router = express.Router()
+const express = require('express')
+const router = express.Router()
+const pool = require('../dal')
 
-// Simulated database for products
-const products = []
-
-router.get('/', (req, res, next) => {
-  res.json({ products })
+router.get('/', async (req, res) => {
+  try {
+    const [products] = await pool.query('SELECT * FROM Products')
+    res.json(products)
+  } catch (error) {
+    res.status(500).json({ error: 'Server error' })
+  }
 })
 
-router.get('/:productid', (req, res, next) => {
-    const product = products.find(p => p.productId === req.params.productid)
-    if (product) {
-      res.json(product)
-    } else {
-      res.status(404).json({ message: 'Product not found.' })
-    }
-  })
+module.exports = router
