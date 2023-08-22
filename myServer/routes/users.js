@@ -4,7 +4,7 @@ const pool = require('../dal')
 const bcrypt = require('bcrypt')
 
 router.post('/register', async (req, res, next) => {
-    const { username, password, email } = req.body
+    const { name, password, email } = req.body
 
     const hashedPassword = await bcrypt.hash(password, 10)
 
@@ -17,7 +17,7 @@ router.post('/register', async (req, res, next) => {
 })
 
 router.post('/login', async (req, res, next) => {
-    const { username, password } = req.body;
+    const { name, password } = req.body;
 
     try {
         const [users] = await pool.query('SELECT * FROM User WHERE name = ?', [username])
