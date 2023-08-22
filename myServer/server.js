@@ -1,5 +1,4 @@
 const express = require('express')
-const bodyParser = require('body-parser')
 const cors = require('cors')
 const productsRouter = require('./routes/products')
 const usersRouter = require('./routes/users')
@@ -8,6 +7,7 @@ const ordersRouter = require('./routes/orders')
 const app = express()
 const PORT = 5000
 
+app.use(express.json())
 app.use(cors())
 app.use(bodyParser.json())
 app.use('/api/products', productsRouter)
