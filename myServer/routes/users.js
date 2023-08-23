@@ -1,6 +1,6 @@
-var express = require('express')
-var router = express.Router()
-const pool = require('../dal')
+const express = require('express')
+const router = express.Router()
+const pool = require('./dal')
 const bcrypt = require('bcrypt')
 
 router.post('/register', async (req, res, next) => {
