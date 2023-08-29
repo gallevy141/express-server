@@ -13,8 +13,4 @@ app.use('/api/products', productsRouter)
 app.use('/api/users', usersRouter)
 //app.use('/api/orders', ordersRouter)
 
-app.listen(PORT, () => {
-    console.log(`Server started on http://localhost:${PORT}`)
-})
-
 module.exports = app
