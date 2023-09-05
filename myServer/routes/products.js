@@ -12,6 +12,7 @@ router.get('/', async (req, res) => {
     }
 
     const [products] = await pool.query(query, [parseInt(limit)])
+    console.log(products)
     res.json(products)
   } catch (error) {
     res.status(500).json({ error: 'Server error' })
