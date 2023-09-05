@@ -13,4 +13,7 @@ app.use('/api/products', productsRouter)
 app.use('/api/users', usersRouter)
 //app.use('/api/orders', ordersRouter)
 
+const cookieParser = require('cookie-parser')
+app.use(cookieParser())
+
 module.exports = app
