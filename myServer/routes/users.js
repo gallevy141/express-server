@@ -29,7 +29,7 @@ router.post('/login', async (req, res, next) => {
     const { email, password } = req.body
 
     try {
-        const [users] = await pool.query('SELECT * FROM User WHERE name = ?', [email])
+        const [users] = await pool.query('SELECT * FROM User WHERE email = ?', [email])
         const user = users[0]
 
         if (user && await bcrypt.compare(password, user.password)) {
