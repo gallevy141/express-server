@@ -1,6 +1,6 @@
 const express = require('express')
-const router = express.Router();
-const pool = require('./dal');
+const router = express.Router()
+const pool = require('./dal')
 const bcrypt = require('bcrypt')
 
 router.post('/register', async (req, res, next) => {
@@ -26,11 +26,11 @@ router.post('/register', async (req, res, next) => {
 })
 
 router.post('/login', async (req, res, next) => {
-    const { name, password } = req.body;
+    const { email, password } = req.body
 
     try {
-        const [users] = await pool.query('SELECT * FROM User WHERE name = ?', [name])
-        const user = users[0];
+        const [users] = await pool.query('SELECT * FROM User WHERE name = ?', [email])
+        const user = users[0]
 
         if (user && await bcrypt.compare(password, user.password)) {
             res.json({ userId: user.userID, token: 'simulated_token', message: 'Login successful.' })
