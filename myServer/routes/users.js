@@ -18,8 +18,10 @@ router.post('/register', async (req, res, next) => {
     }
 
     try {
-        await pool.query('INSERT INTO User (name, email, password) VALUES (?, ?, ?)', [name, email, hashedPassword])
-        res.json({ message: 'User registered successfully.' })
+        const result = await pool.query('INSERT INTO User (name, email, password) VALUES (?, ?, ?)', [name, email, hashedPassword])
+        
+        res.json({ userId: result.insertId, name: name, token: 'simulated_token', message: 'User registered successfully.' })
+
     } catch (error) {
         res.status(500).json({ error: 'Error registering user' })
     }
