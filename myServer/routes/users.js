@@ -19,7 +19,6 @@ router.post('/register', async (req, res, next) => {
 
     try {
         const result = await pool.query('INSERT INTO User (name, email, password) VALUES (?, ?, ?)', [name, email, hashedPassword])
-        
         res.json({ userId: result.insertId, name: name, token: 'simulated_token', message: 'User registered successfully.' })
 
     } catch (error) {
@@ -28,14 +27,14 @@ router.post('/register', async (req, res, next) => {
 })
 
 router.post('/login', async (req, res, next) => {
-    const { email, password } = req.body
+    const { email, password } = req.body;
 
     try {
         const [users] = await pool.query('SELECT * FROM User WHERE email = ?', [email])
-        const user = users[0]
+        const user = users[0];
 
         if (user && await bcrypt.compare(password, user.password)) {
-            res.json({ userId: user.userID, name:user.name, token: 'simulated_token', message: 'Login successful.' })
+            res.json({ userId: user.userID, name: user.name, token: 'simulated_token', message: 'Login successful.' })
         } else {
             res.status(400).json({ message: 'Invalid credentials.' })
         }
@@ -54,8 +53,7 @@ router.get('/:userId', async (req, res, next) => {
                 userId: user.userID, 
                 username: user.name, 
                 email: user.email
-                // Exclude password for security reasons
-            })
+            });
         } else {
             res.status(404).json({ message: 'User not found.' })
         }
