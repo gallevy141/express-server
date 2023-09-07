@@ -4,6 +4,7 @@ const pool = require('./dal')
 const bcrypt = require('bcrypt')
 
 router.post('/register', async (req, res, next) => {
+    console.log("Received request with body:", req.body)
     const { name, password, email } = req.body
 
     if (!name || !password || !email) {
@@ -13,12 +14,14 @@ router.post('/register', async (req, res, next) => {
     const hashedPassword = await bcrypt.hash(password, 10)
 
     const [existingUsers] = await pool.query('SELECT * FROM User WHERE email = ?', [email])
+    console.log("Existing users with email:", existingUsers)
     if (existingUsers.length) {
         return res.status(400).json({ error: 'User with this email already exists!' })
     }
 
     try {
         const result = await pool.query('INSERT INTO User (name, email, password) VALUES (?, ?, ?)', [name, email, hashedPassword])
+        console.log("Insertion result:", result)
         res.json({ userId: result.insertId, name: name, token: 'simulated_token', message: 'User registered successfully.' })
 
     } catch (error) {
