@@ -131,6 +131,8 @@ router.post('/api/counter/decrement', (req, res) => {
 })
 
 router.post('/logout', (req, res) => {
+    res.cookie('userData', encryptedData, { httpOnly: true })
+    const encryptedData = encrypt(JSON.stringify({ userId: user.userID, name: user.name }))
     req.session.destroy(err => {
         if (err) return res.status(500).send('Could not log out.')
         res.clearCookie('connect.sid')
