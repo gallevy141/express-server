@@ -3,7 +3,7 @@ const cors = require('cors')
 const productsRouter = require('./routes/products')
 const usersRouter = require('./routes/users')
 const ordersRouter = require('./routes/orders')
-const authMiddleware = require('./middleware/authMiddleware')
+const authMiddleware = require('./routes/authMiddleware')
 const cryptoUtil = require('./cryptoUtil') 
 
 const app = express()
