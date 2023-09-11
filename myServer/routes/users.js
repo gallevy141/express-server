@@ -130,4 +130,12 @@ router.post('/api/counter/decrement', (req, res) => {
     res.json({ counter: req.session.counter })
 })
 
+router.post('/logout', (req, res) => {
+    req.session.destroy(err => {
+        if (err) return res.status(500).send('Could not log out.')
+        res.clearCookie('connect.sid')
+        res.json({ message: 'Logged out.' })
+    })
+})
+
 module.exports = router
