@@ -1,6 +1,6 @@
 var express = require('express')
 var router = express.Router()
-const pool = require('../dal')
+const pool = require('./dal')
 const authMiddleware = require('./authMiddleware')
 
 router.get('/', async function(req, res) {
