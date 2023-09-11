@@ -114,4 +114,20 @@ router.post('/api/reset-password', async (req, res) => {
     res.json({ message: 'Password reset successfully!' })
 })
 
+router.post('/api/counter/increment', (req, res) => {
+    if(!req.session.counter) {
+        req.session.counter = 0
+    }
+    req.session.counter++
+    res.json({ counter: req.session.counter })
+})
+
+router.post('/api/counter/decrement', (req, res) => {
+    if(!req.session.counter) {
+        req.session.counter = 0
+    }
+    req.session.counter--
+    res.json({ counter: req.session.counter })
+})
+
 module.exports = router
