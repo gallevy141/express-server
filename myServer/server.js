@@ -2,18 +2,23 @@ const express = require('express')
 const cors = require('cors')
 const productsRouter = require('./routes/products')
 const usersRouter = require('./routes/users')
-//const ordersRouter = require('./routes/orders')
+const ordersRouter = require('./routes/orders')
+const authMiddleware = require('./middleware/authMiddleware')
+const cryptoUtil = require('./cryptoUtil') 
 
 const app = express()
-const PORT = 5000
 
 app.use(express.json())
-app.use(cors())
+app.use(cors({
+  credentials: true,
+  origin: 'http://localhost:3000'
+}))
+app.use(cookieParser(process.env.SECRET_KEY))
+
+app.use('/api/orders', authMiddleware)
+
 app.use('/api/products', productsRouter)
 app.use('/api/users', usersRouter)
-//app.use('/api/orders', ordersRouter)
-
-const cookieParser = require('cookie-parser')
-app.use(cookieParser())
+app.use('/api/orders', ordersRouter)
 
 module.exports = app
