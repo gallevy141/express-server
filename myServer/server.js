@@ -16,8 +16,6 @@ app.use(cors({
 }))
 app.use(cookieParser(process.env.SECRET_KEY))
 
-app.use('/api/orders', authMiddleware)
-
 app.use('/api/products', productsRouter)
 app.use('/api/users', usersRouter)
 app.use('/api/orders', ordersRouter)
