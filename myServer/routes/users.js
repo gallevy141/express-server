@@ -25,10 +25,10 @@ router.post('/register', async (req, res, next) => {
         const result = await pool.query('INSERT INTO User (name, email, password) VALUES (?, ?, ?)', [name, email, hashedPassword])
         console.log("Insertion result:", result)
 
-        const encryptedData = encrypt(JSON.stringify({ userId: result.insertId, name: name }))
-        res.cookie('userData', encryptedData, { httpOnly: true })
-        res.json({ userId: result.insertId, name: name, token: 'simulated_token', message: 'User registered successfully.' })
+        req.session.userId = result.insertId 
+        req.session.username = name  
 
+        res.json({ userId: result.insertId, name: name, message: 'User registered successfully.' })
     } catch (error) {
         res.status(500).json({ error: 'Error registering user' })
     }
@@ -39,20 +39,22 @@ router.post('/login', async (req, res, next) => {
     
     try {
         const [users] = await pool.query('SELECT * FROM User WHERE email = ?', [email])
-        const user = users[0];
+        const user = users[0]
 
         if (user && await bcrypt.compare(password, user.password)) {
             req.session.userId = user.userID
             req.session.username = user.name
-            res.cookie('userData', encryptedData, { httpOnly: true })
             res.json({ userId: user.userID, name: user.name, message: 'Login successful.' })
         } else {
             res.status(400).json({ message: 'Invalid credentials.' })
         }
     } catch (error) {
+        console.error("Error during login:", error)
         res.status(500).json({ error: 'Error logging in' })
     }
 })
+
+    
 
 router.get('/:userId', async (req, res, next) => {
     try {
@@ -80,7 +82,6 @@ router.post('/api/request-password-reset', async (req, res) => {
 
     await pool.query('UPDATE User SET resetToken = ?, resetTokenExp = DATE_ADD(NOW(), INTERVAL 1 HOUR) WHERE email = ?', [token, email])
 
-    // Send email containing the link with the token
     const mailOptions = {
         to: email,
         subject: 'Password Reset',
@@ -131,13 +132,34 @@ router.post('/api/counter/decrement', (req, res) => {
 })
 
 router.post('/logout', (req, res) => {
-    res.cookie('userData', encryptedData, { httpOnly: true })
-    const encryptedData = encrypt(JSON.stringify({ userId: user.userID, name: user.name }))
     req.session.destroy(err => {
         if (err) return res.status(500).send('Could not log out.')
         res.clearCookie('connect.sid')
         res.json({ message: 'Logged out.' })
     })
+})
+
+router.get('/me', async (req, res, next) => {
+    if(!req.session.userId) {
+        return res.status(401).json({ error: 'User is not authenticated' })
+    }
+
+    try {
+        const [users] = await pool.query('SELECT * FROM User WHERE userID = ?', [req.session.userId])
+        const user = users[0]
+
+        if (user) {
+            res.json({ 
+                userId: user.userID, 
+                username: user.name, 
+                email: user.email
+            })
+        } else {
+            res.status(404).json({ message: 'User not found.' })
+        }
+    } catch (error) {
+        res.status(500).json({ error: 'Error fetching user' })
+    }
 })
 
 module.exports = router
