@@ -5,6 +5,7 @@ const usersRouter = require('./routes/users')
 const ordersRouter = require('./routes/orders')
 const authMiddleware = require('./routes/authMiddleware')
 const cryptoUtil = require('./cryptoUtil') 
+const cookieParser = require('cookie-parser')
 
 const app = express()
 
