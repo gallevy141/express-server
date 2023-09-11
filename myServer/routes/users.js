@@ -42,9 +42,10 @@ router.post('/login', async (req, res, next) => {
         const user = users[0];
 
         if (user && await bcrypt.compare(password, user.password)) {
-            const encryptedData = encrypt(JSON.stringify({ userId: user.userID, name: user.name }))
+            req.session.userId = user.userID
+            req.session.username = user.name
             res.cookie('userData', encryptedData, { httpOnly: true })
-            res.json({ userId: user.userID, name: user.name, token: 'simulated_token', message: 'Login successful.' })
+            res.json({ userId: user.userID, name: user.name, message: 'Login successful.' })
         } else {
             res.status(400).json({ message: 'Invalid credentials.' })
         }
