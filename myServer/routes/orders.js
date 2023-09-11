@@ -2,9 +2,9 @@ var express = require('express')
 var router = express.Router()
 const pool = require('./dal')
 const authMiddleware = require('./authMiddleware')
+router.use(authMiddleware)
 
 router.get('/', async function(req, res) {
-    router.use(authMiddleware)
     try {
         const [orders] = await pool.query('SELECT * FROM Orders')
         res.json(orders)
@@ -14,7 +14,6 @@ router.get('/', async function(req, res) {
 })
 
 router.post('/', async function(req, res) {
-    router.use(authMiddleware)
     const { userId, product, amount } = req.body
 
     if (!userId || !product || !amount) {
