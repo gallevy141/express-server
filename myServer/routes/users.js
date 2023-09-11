@@ -84,7 +84,7 @@ router.post('/api/request-password-reset', async (req, res) => {
         to: email,
         subject: 'Password Reset',
         text: `Click the following link to reset your password: 
-        http://frontendurl/reset-password?token=${token}` //replace with actual link once page created
+        http://localhost:3000/reset-password?token=${token}` //replace with actual link once page created
     }
 
     transporter.sendMail(mailOptions, (error, response) => {
