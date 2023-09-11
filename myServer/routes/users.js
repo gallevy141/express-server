@@ -140,6 +140,7 @@ router.post('/logout', (req, res) => {
 })
 
 router.get('/me', async (req, res, next) => {
+    console.log('Hit /me endpoint')
     if(!req.session.userId) {
         return res.status(401).json({ error: 'User is not authenticated' })
     }
