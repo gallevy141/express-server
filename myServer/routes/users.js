@@ -8,9 +8,6 @@ router.post('/register', async (req, res, next) => {
     console.log("Received request with body:", req.body)
     const { name, password, email } = req.body
 
-    const encryptedData = encrypt(JSON.stringify({ userId: result.insertId, name: name }))
-    res.cookie('userData', encryptedData, { httpOnly: true })
-
     if (!name || !password || !email) {
         return res.status(400).json({ error: 'All fields are required!' })
     }
@@ -26,6 +23,9 @@ router.post('/register', async (req, res, next) => {
     try {
         const result = await pool.query('INSERT INTO User (name, email, password) VALUES (?, ?, ?)', [name, email, hashedPassword])
         console.log("Insertion result:", result)
+
+        const encryptedData = encrypt(JSON.stringify({ userId: result.insertId, name: name }))
+        res.cookie('userData', encryptedData, { httpOnly: true })
         res.json({ userId: result.insertId, name: name, token: 'simulated_token', message: 'User registered successfully.' })
 
     } catch (error) {
@@ -35,15 +35,14 @@ router.post('/register', async (req, res, next) => {
 
 router.post('/login', async (req, res, next) => {
     const { email, password } = req.body
-
-    const encryptedData = encrypt(JSON.stringify({ userId: user.userID, name: user.name }))
-    res.cookie('userData', encryptedData, { httpOnly: true })
     
     try {
         const [users] = await pool.query('SELECT * FROM User WHERE email = ?', [email])
         const user = users[0];
 
         if (user && await bcrypt.compare(password, user.password)) {
+            const encryptedData = encrypt(JSON.stringify({ userId: user.userID, name: user.name }))
+            res.cookie('userData', encryptedData, { httpOnly: true })
             res.json({ userId: user.userID, name: user.name, token: 'simulated_token', message: 'Login successful.' })
         } else {
             res.status(400).json({ message: 'Invalid credentials.' })
