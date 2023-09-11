@@ -2,7 +2,7 @@ const express = require('express')
 const router = express.Router()
 const pool = require('./dal')
 const bcrypt = require('bcrypt')
-const { encrypt } = require('./cryptoUtil')
+const { encrypt } = require('../cryptoUtil')
 
 router.post('/register', async (req, res, next) => {
     console.log("Received request with body:", req.body)
