@@ -6,13 +6,21 @@ const ordersRouter = require('./routes/orders')
 const authMiddleware = require('./routes/authMiddleware')
 const cryptoUtil = require('./cryptoUtil') 
 const cookieParser = require('cookie-parser')
-
+const session = require('express-session');
+const FileStore = require('session-file-store')(session)
 const app = express()
 
 app.use(express.json())
 app.use(cors({
   credentials: true,
   origin: 'http://localhost:3000'
+}))
+app.use(session({
+  store: new FileStore(),
+  secret: process.env.SECRET_KEY, 
+  resave: false,
+  saveUninitialized: true,
+  cookie: { maxAge: 300000 } // 5 min expiration time
 }))
 app.use(cookieParser(process.env.SECRET_KEY))
 
