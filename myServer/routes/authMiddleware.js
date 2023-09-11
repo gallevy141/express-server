@@ -1,4 +1,4 @@
-const { decrypt } = require('./cryptoUtil')
+const { decrypt } = require('../cryptoUtil')
 
 module.exports = (req, res, next) => {
    const token = req.cookies.userData
