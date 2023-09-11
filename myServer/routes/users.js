@@ -3,6 +3,7 @@ const router = express.Router()
 const pool = require('./dal')
 const bcrypt = require('bcrypt')
 const { encrypt } = require('../cryptoUtil')
+const crypto = require('crypto')
 
 router.post('/register', async (req, res, next) => {
     console.log("Received request with body:", req.body)
@@ -69,6 +70,47 @@ router.get('/:userId', async (req, res, next) => {
     } catch (error) {
         res.status(500).json({ error: 'Error fetching user' })
     }
+})
+
+router.post('/api/request-password-reset', async (req, res) => {
+    const { email } = req.body
+
+    const token = crypto.randomBytes(20).toString('hex')
+
+    await pool.query('UPDATE User SET resetToken = ?, resetTokenExp = DATE_ADD(NOW(), INTERVAL 1 HOUR) WHERE email = ?', [token, email])
+
+    // Send email containing the link with the token
+    const mailOptions = {
+        to: email,
+        subject: 'Password Reset',
+        text: `Click the following link to reset your password: 
+        http://frontendurl/reset-password?token=${token}` //replace with actual link once page created
+    }
+
+    transporter.sendMail(mailOptions, (error, response) => {
+        if (error) {
+            res.status(500).json({ error: 'Error sending email' })
+        } else {
+            res.json({ message: 'Password reset email sent!' })
+        }
+    })
+})
+
+router.post('/api/reset-password', async (req, res) => {
+    const { token, newPassword } = req.body
+
+    const [users] = await pool.query('SELECT * FROM User WHERE resetToken = ? AND resetTokenExp > NOW()', [token])
+    const user = users[0]
+
+    if (!user) {
+        return res.status(400).json({ error: 'Invalid or expired token' })
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10)
+
+    await pool.query('UPDATE User SET password = ?, resetToken = NULL, resetTokenExp = NULL WHERE userID = ?', [hashedPassword, user.userID])
+
+    res.json({ message: 'Password reset successfully!' })
 })
 
 module.exports = router
