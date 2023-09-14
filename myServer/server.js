@@ -6,9 +6,9 @@ const ordersRouter = require('./routes/orders')
 const authMiddleware = require('./routes/authMiddleware')
 const cryptoUtil = require('./cryptoUtil') 
 const cookieParser = require('cookie-parser')
-const session = require('express-session');
+const session = require('express-session')
 const FileStore = require('session-file-store')(session)
-const cartRoutes = require('./cart')
+const cartRoutes = require('./routes/cart')
 const app = express()
 
 
