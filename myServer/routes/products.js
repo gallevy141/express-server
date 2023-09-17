@@ -9,9 +9,12 @@ router.get('/', async (req, res) => {
     
     if (limit) {
       query += ' ORDER BY productID DESC LIMIT ?'
+    } else {
+      query += ' ORDER BY productID DESC'
     }
 
-    const [products] = await pool.query(query, [parseInt(limit)])
+    const values = limit ? [parseInt(limit)] : [];
+    const [products] = await pool.query(query, values)
     console.log(products)
     res.json(products)
   } catch (error) {
