@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-const pool = require('./dal')
+const pool = require('../dal')
 const bcrypt = require('bcrypt')
 const crypto = require('crypto')
 
