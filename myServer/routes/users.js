@@ -54,7 +54,29 @@ router.post('/login', async (req, res, next) => {
     }
 })
 
-    
+router.get('/me', async (req, res, next) => {
+    console.log('Hit /me endpoint')
+    if(!req.session.userId) {
+        return res.status(401).json({ error: 'User is not authenticated' })
+    }
+
+    try {
+        const [users] = await pool.query('SELECT * FROM User WHERE userID = ?', [req.session.userId])
+        const user = users[0]
+
+        if (user) {
+            res.json({ 
+                userId: user.userID, 
+                username: user.name, 
+                email: user.email
+            })
+        } else {
+            res.status(404).json({ message: 'User not found.' })
+        }
+    } catch (error) {
+        res.status(500).json({ error: 'Error fetching user' })
+    }
+})
 
 router.get('/:userId', async (req, res, next) => {
     try {
@@ -137,30 +159,6 @@ router.post('/logout', (req, res) => {
         res.clearCookie('connect.sid')
         res.json({ message: 'Logged out.' })
     })
-})
-
-router.get('/me', async (req, res, next) => {
-    console.log('Hit /me endpoint')
-    if(!req.session.userId) {
-        return res.status(401).json({ error: 'User is not authenticated' })
-    }
-
-    try {
-        const [users] = await pool.query('SELECT * FROM User WHERE userID = ?', [req.session.userId])
-        const user = users[0]
-
-        if (user) {
-            res.json({ 
-                userId: user.userID, 
-                username: user.name, 
-                email: user.email
-            })
-        } else {
-            res.status(404).json({ message: 'User not found.' })
-        }
-    } catch (error) {
-        res.status(500).json({ error: 'Error fetching user' })
-    }
 })
 
 module.exports = router
