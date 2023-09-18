@@ -3,6 +3,7 @@ const { decrypt } = require('../cryptoUtil')
 module.exports = (req, res, next) => {
     const encryptedUserData = req.cookies.userData
     if (!encryptedUserData) {
+        res.clearCookie('userData')
         return res.status(401).send('Not authenticated')
     }
 
