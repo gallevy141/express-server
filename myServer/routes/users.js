@@ -4,6 +4,7 @@ const pool = require('../dal')
 const bcrypt = require('bcrypt')
 const crypto = require('crypto')
 const cryptoUtil = require('../cryptoUtil')
+const authMiddleware = require('./authMiddleware')
 
 router.post('/register', async (req, res, next) => {
     console.log("Received request with body:", req.body)
@@ -58,7 +59,7 @@ router.post('/login', async (req, res, next) => {
     }
 })
 
-router.get('/me', async (req, res, next) => {
+router.get('/me', authMiddleware, async (req, res, next) => {
     console.log('Hit /me endpoint')
     if(!req.session.userId) {
         return res.status(401).json({ error: 'User is not authenticated' })
