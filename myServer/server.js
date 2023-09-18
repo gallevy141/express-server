@@ -28,6 +28,6 @@ app.use(cookieParser(process.env.SECRET_KEY))
 
 app.use('/api/products', productsRouter)
 app.use('/api/users', usersRouter)
-app.use('/api/orders', ordersRouter)
-app.use('/api/cart', cartRoutes)
+app.use('/api/orders', authMiddleware, ordersRouter)
+app.use('/api/cart', authMiddleware, cartRoutes)
 module.exports = app
