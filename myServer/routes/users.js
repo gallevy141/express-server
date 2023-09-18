@@ -3,6 +3,7 @@ const router = express.Router()
 const pool = require('../dal')
 const bcrypt = require('bcrypt')
 const crypto = require('crypto')
+const cryptoUtil = require('../cryptoUtil')
 
 router.post('/register', async (req, res, next) => {
     console.log("Received request with body:", req.body)
