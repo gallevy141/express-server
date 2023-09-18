@@ -37,6 +37,7 @@ router.post('/register', async (req, res, next) => {
 
 router.post('/login', async (req, res, next) => {
     const { email, password } = req.body
+    console.log("Login request body:", req.body)
     
     try {
         const [users] = await pool.query('SELECT * FROM User WHERE email = ?', [email])
