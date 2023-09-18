@@ -2,7 +2,6 @@ const express = require('express')
 const router = express.Router()
 const pool = require('./dal')
 const bcrypt = require('bcrypt')
-const { encrypt } = require('../cryptoUtil')
 const crypto = require('crypto')
 
 router.post('/register', async (req, res, next) => {
