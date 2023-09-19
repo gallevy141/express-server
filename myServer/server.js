@@ -1,4 +1,5 @@
 const express = require('express')
+const path = require('path')
 const cors = require('cors')
 const productsRouter = require('./routes/products')
 const usersRouter = require('./routes/users')
@@ -30,4 +31,5 @@ app.use('/api/products', productsRouter)
 app.use('/api/users', usersRouter)
 app.use('/api/orders', authMiddleware, ordersRouter)
 app.use('/api/cart', authMiddleware, cartRoutes)
+app.use('/public', express.static(path.join(__dirname, 'public')))
 module.exports = app
