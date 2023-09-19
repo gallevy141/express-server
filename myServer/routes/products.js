@@ -24,8 +24,8 @@ router.get('/', async (req, res) => {
 
 router.get('/:productId', async (req, res) => {
   try {
-      const { productId } = req.params;
-      const [product] = await pool.query('SELECT * FROM Products WHERE id = ?', [productId])
+      const { productId } = req.params
+      const [product] = await pool.query('SELECT * FROM Products WHERE ProductsID = ?', [productId])      
       if (product.length) {
           res.json(product[0])
       } else {
