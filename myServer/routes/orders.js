@@ -27,4 +27,20 @@ router.post('/', async function(req, res) {
     }
 })
 
+router.get('/recent', async function(req, res) {
+    try {
+        const userId = req.user.userId
+        
+        const [order] = await pool.query('SELECT * FROM Orders WHERE userId = ? ORDER BY orderID DESC LIMIT 1', [userId])
+        
+        if (order && order.length) {
+            res.json(order[0])
+        } else {
+            res.status(404).json({ error: 'No recent orders found' })
+        }
+    } catch (error) {
+        res.status(500).json({ error: 'Server error' })
+    }
+})
+
 module.exports = router
