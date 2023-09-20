@@ -61,7 +61,7 @@ router.post('/login', async (req, res, next) => {
 })
 
 router.get('/me', authMiddleware, async (req, res, next) => {
-    console.log('Hit /me endpoint')
+    console.log('Hit /me endpoint', req.session)
     if(!req.session.userId) {
         return res.status(401).json({ error: 'User is not authenticated' })
     }
@@ -166,6 +166,25 @@ router.post('/logout', (req, res) => {
         res.clearCookie('userData')
         res.json({ message: 'Logged out.' })
     })
+})
+
+router.get('/:userId/address', authMiddleware, async (req, res, next) => {
+    try {
+        const [users] = await pool.query('SELECT address FROM User WHERE userID = ?', [req.params.userId])
+        const user = users[0]
+
+        if (user) {
+            if(user.address) {
+                res.json({ address: user.address })
+            } else {
+                res.status(404).json({ message: 'Address not found for the user.' })
+            }
+        } else {
+            res.status(404).json({ message: 'User not found.' })
+        }
+    } catch (error) {
+        res.status(500).json({ error: 'Error fetching address' })
+    }
 })
 
 module.exports = router
