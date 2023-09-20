@@ -187,4 +187,26 @@ router.get('/:userId/address', authMiddleware, async (req, res, next) => {
     }
 })
 
+router.post('/:userId/address', async (req, res, next) => {
+    const userId = req.params.userId
+    const address = req.body.address
+
+    if (!userId || !address) {
+        return res.status(400).json({ error: 'User ID and address are required' })
+    }
+
+    try {
+        const [result] = await pool.query('UPDATE User SET address = ? WHERE userID = ?', [address, userId])
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ error: 'User not found or no update needed.' })
+        }
+
+        res.json({ success: true, message: 'Address updated successfully.' })
+    } catch (error) {
+        console.error("Error updating address:", error);
+        res.status(500).json({ error: 'Error updating address in the database' })
+    }
+})
+
 module.exports = router
