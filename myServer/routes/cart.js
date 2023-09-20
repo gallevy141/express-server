@@ -6,7 +6,13 @@ const pool = require('../dal')
 router.get('/:userId', async (req, res) => {
     try {
         const { userId } = req.params
-        const [items] = await pool.query('SELECT * FROM Cart WHERE userID = ?', [userId])
+        const query = `
+          SELECT c.userID, c.productID, c.quantity, p.name, p.image, p.price
+          FROM Cart c
+          JOIN Products p ON c.productID = p.productID
+          WHERE c.userID = ?
+        `
+        const [items] = await pool.query(query, [userId])
         res.json(items)
     } catch (error) {
         res.status(500).json({ error: 'Server error' })
