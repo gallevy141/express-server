@@ -187,19 +187,14 @@ router.get('/:userId/address', authMiddleware, async (req, res, next) => {
     }
 })
 
-router.post('/:userId/address', async (req, res) => {
-    const { userId } = req.params
-    const { address } = req.body
-
+router.post('/:userId/address', authMiddleware, async (req, res) => {
     try {
-        const result = await pool.query('UPDATE User SET address = ? WHERE userID = ?', [address, userId])
-        if (result.affectedRows > 0) {
-            res.json({ success: true, message: 'Address added successfully.' })
-        } else {
-            res.status(404).json({ error: 'User not found' })
-        }
+        const { userId } = req.params
+        const { address } = req.body
+        await pool.query('UPDATE User SET address = ? WHERE userID = ?', [address, userId])
+        res.json({ success: true, message: 'Address added successfully.' })
     } catch (error) {
-        console.error("Error:", error)
+        console.error("Error adding address:", error)
         res.status(500).json({ error: 'Error adding address' })
     }
 })
