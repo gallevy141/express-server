@@ -43,4 +43,23 @@ router.get('/recent', async function(req, res) {
     }
 })
 
+router.get('/user/:userId', async function(req, res) {
+    const userId = req.params.userId
+
+    if (!userId) {
+        return res.status(400).json({ error: 'User ID is required.' })
+    }
+
+    try {
+        const [orders] = await pool.query('SELECT * FROM Orders WHERE userId = ?', [userId])
+        if (orders.length) {
+            res.json(orders)
+        } else {
+            res.status(404).json({ message: 'No orders found for this user.' })
+        }
+    } catch (error) {
+        res.status(500).json({ error: 'Error fetching orders for the user' })
+    }
+})
+
 module.exports = router
