@@ -41,4 +41,21 @@ router.delete('/:userId/remove/:productId', async (req, res) => {
     }
 })
 
+router.put('/:userId/update/:productId', async (req, res) => {
+    const { userId, productId } = req.params;
+    const { quantity } = req.body;
+
+    try {
+        const [existing] = await pool.query('SELECT * FROM Cart WHERE userID = ? AND productID = ?', [userId, productId])
+        if (existing.length) {
+            await pool.query('UPDATE Cart SET quantity = ? WHERE userID = ? AND productID = ?', [quantity, userId, productId])
+            res.status(200).json({ message: 'Product quantity updated in cart' })
+        } else {
+            res.status(404).json({ message: 'Product not found in cart' })
+        }
+    } catch (error) {
+        res.status(500).json({ error: 'Server error' })
+    }
+})
+
 module.exports = router
