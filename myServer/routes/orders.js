@@ -86,14 +86,10 @@ router.get('/user/:userId', async function(req, res) {
     }
 
     try {
-        const [orders] = await pool.query('SELECT * FROM Orders WHERE userId = ?', [userId])
-        if (orders.length) {
-            res.json(orders)
-        } else {
-            res.status(404).json({ message: 'No orders found for this user.' })
-        }
+        const [orders] = await pool.query('SELECT * FROM Orders WHERE userId = ?', [userId]);
+        res.json(orders)
     } catch (error) {
-        res.status(500).json({ error: 'Error fetching orders for the user' })
+        res.status(500).json({ error: 'Error fetching orders for the user' });
     }
 })
 
