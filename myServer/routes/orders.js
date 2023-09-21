@@ -43,7 +43,7 @@ router.post('/', async function(req, res) {
 
         await connection.commit()
 
-        res.status(201).json({ message: 'Order created successfully.', orderID: orderId })
+        res.status(201).json({ success: true, message: 'Order created successfully.', orderID: orderId })
     } catch (error) {
         await connection.rollback()
         res.status(500).json({ error: 'Error creating order' })
