@@ -64,4 +64,13 @@ router.put('/:userId/update/:productId', async (req, res) => {
     }
 })
 
+router.delete('/:userId/clear', async function(req, res) {
+    try {
+        await pool.query('DELETE FROM Cart WHERE userID = ?', [req.params.userId])
+        res.status(200).json({ message: 'Cart cleared successfully.' })
+    } catch (error) {
+        res.status(500).json({ error: 'Error clearing the cart.' })
+    }
+})
+
 module.exports = router
