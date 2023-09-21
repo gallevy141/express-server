@@ -33,8 +33,7 @@ router.post('/', async function(req, res) {
 router.get('/recent', async function(req, res) {
     try {
         const userId = req.user.userId
-        
-        const [order] = await pool.query('SELECT * FROM Orders WHERE userId = ? ORDER BY orderID DESC LIMIT 1', [userId])
+        const [order] = await pool.query('SELECT * FROM Orders WHERE userID = ? ORDER BY orderID DESC LIMIT 1', [userId])
         
         if (order && order.length) {
             res.json(order[0])
