@@ -55,10 +55,21 @@ router.post('/', async function(req, res) {
 router.get('/recent', async function(req, res) {
     try {
         const userId = req.user.userId
-        const [order] = await pool.query('SELECT * FROM Orders WHERE userID = ? ORDER BY orderID DESC LIMIT 1', [userId])
+        const [orders] = await pool.query('SELECT * FROM Orders WHERE userID = ? ORDER BY orderID DESC LIMIT 1', [userId])
         
-        if (order && order.length) {
-            res.json(order[0])
+        if (orders && orders.length) {
+            const recentOrder = orders[0]
+
+            const [orderDetails] = await pool.query(`
+                SELECT od.productID, od.quantity, od.price, p.name 
+                FROM OrderDetails od
+                JOIN Products p ON od.productID = p.productID
+                WHERE od.orderID = ?
+            `, [recentOrder.orderID])
+
+            recentOrder.products = orderDetails
+
+            res.json(recentOrder)
         } else {
             res.status(404).json({ error: 'No recent orders found' })
         }
