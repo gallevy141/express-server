@@ -14,13 +14,16 @@ router.get('/', async function(req, res) {
 })
 
 router.post('/', async function(req, res) {
-    const { userId, product, amount } = req.body
+    const { userId, product, amount, deliveryAddress } = req.body
 
     if (!userId || !product || !amount) {
-        return res.status(400).json({ error: 'All fields are required.' })
+        return res.status(400).json({ error: 'userId, product, and amount fields are required.' })
     }
+    
+    const addressToInsert = deliveryAddress || null
+
     try {
-        const result = await pool.query('INSERT INTO Orders (userId, product, amount) VALUES (?, ?, ?)', [userId, product, amount])
+        const result = await pool.query('INSERT INTO Orders (userId, product, amount, deliveryAddress) VALUES (?, ?, ?, ?)', [userId, product, amount, addressToInsert])
         res.status(201).json({ message: 'Order created successfully.', orderID: result.insertId })
     } catch (error) {
         res.status(500).json({ error: 'Error creating order' })
