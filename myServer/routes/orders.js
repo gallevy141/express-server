@@ -14,19 +14,41 @@ router.get('/', async function(req, res) {
 })
 
 router.post('/', async function(req, res) {
-    const { userId, product, amount, deliveryAddress } = req.body
+    const { userId, cartItems, deliveryAddress } = req.body
 
-    if (!userId || !product || !amount) {
-        return res.status(400).json({ error: 'userId, product, and amount fields are required.' })
+    if (!userId || !cartItems || cartItems.length === 0) {
+        return res.status(400).json({ error: 'userId and cartItems fields are required.' })
     }
     
-    const addressToInsert = deliveryAddress || null
+    const totalPrice = cartItems.reduce((total, item) => total + (item.price * item.quantity), 0)
+    
+    const connection = await pool.getConnection()
 
     try {
-        const result = await pool.query('INSERT INTO Orders (userId, product, amount, deliveryAddress) VALUES (?, ?, ?, ?)', [userId, product, amount, addressToInsert])
-        res.status(201).json({ message: 'Order created successfully.', orderID: result.insertId })
+        await connection.beginTransaction();
+
+        const [orderResult] = await connection.query(
+            'INSERT INTO Orders (userId, totalPrice, deliveryAddress, date) VALUES (?, ?, ?, NOW())',
+            [userId, totalPrice, deliveryAddress]
+        )
+        
+        const orderId = orderResult.insertId
+
+        for (let item of cartItems) {
+            await connection.query(
+                'INSERT INTO OrderDetails (orderID, productID, quantity, price) VALUES (?, ?, ?, ?)',
+                [orderId, item.productID, item.quantity, item.price]
+            )
+        }
+
+        await connection.commit()
+
+        res.status(201).json({ message: 'Order created successfully.', orderID: orderId })
     } catch (error) {
+        await connection.rollback()
         res.status(500).json({ error: 'Error creating order' })
+    } finally {
+        connection.release()
     }
 })
 
